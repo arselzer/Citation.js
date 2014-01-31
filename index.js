@@ -1,35 +1,60 @@
-var request = require("request");
+var request = require("request"),
+    cheerio = require("cheerio");
 
-function Mla(site, cb) {
+function Mla(site) {
+  this.setSite(site);
+}
+
+// Mla.setSite(site)
+Mla.prototype.setSite = function(site) {
   this.site = site;
-  this.getReference();
-}
+};
 
-/**
-* MLA's Structure:
-*
-* MLA sucks. seriously. The format is not easily readable, and there is
-* no real standard (apparently). Everyone seems to have their own
-* interpretation of it. Everything I could find were unclear examples.
-*
-* There is a book ("MLA Style Manual and Guide to Scholarly Publishing"),
-* but it rather seems to be a manual than a clear definition of a standard,
-* explaining why there are so many different points of view on the citation
-* style. See following:
-*
-* http://www.library.cornell.edu/resrch/citmanage/mla
-* http://www2.liu.edu/cwis/cwp/library/workshop/citmla.htm
-* https://owl.english.purdue.edu/owl/resource/747/01/
-*
-* However, this seems to be the clearest definition:
-* http://www.library.arizona.edu/search/reference/citation-mla.html#mlabk8
-*
-* By the way, the public site of the "Modern Language Association"
-* seems very "modern", ...
-* 
-*
-*/
+// Mla.getOrganization(function(err, citation) { } )
+Mla.prototype.getOrganization = function(cb) {
+  var domain = /^.*\//.exec(this.site)[0]
+  cb(undefined, domain);
+};
 
-Mla.prototype.getReference = function() {
+// Mla.getReference(function(err, citation) { } )
+Mla.prototype.getReference = function(cb) {
+  request(this.site, function(err, res, body) {
+    if (err) {
+      cb(err, undefined);
+    }
+    else {
+      var $ = cheerio.load(body);
 
-}
+      // MLA field 1: author
+      var author = $('meta[name="author"]').attr("content");
+
+      // MLA field 2: title
+      var title = $("head title").text();
+
+      // MLA field 3: organization
+      var organization;
+      Mla.getOrganization(function(err, domain) {
+        console.log(domain);
+      });
+
+      // MLA field 4: date of last modification
+      var lastModDate;
+
+      // MLA field 5: date accessed.
+      var accessDate = (new Date()).toDateString();
+
+      var citation = {
+        "author" : author,
+        "title" : title,
+        "organization" : organization,
+        "last-mod-date" : lastModDate,
+        "type" : "Web",
+        "access-date" : accessDate
+      };
+
+      cb(undefined, citation);
+    }
+  });
+};
+
+module.exports = Mla;
