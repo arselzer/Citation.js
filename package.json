@@ -1,6 +1,6 @@
 {
   "name": "citation.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Get the correct MLA citation for a site.",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,6 @@
 
   "dependencies" : {
     "cheerio" : "0.13.x",
-    "optimist" : "0.6.x"
+    "request" : "2.x"
   }
 }
