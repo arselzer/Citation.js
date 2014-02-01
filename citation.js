@@ -3,7 +3,8 @@ var request = require("request"),
     cheerio = require("cheerio");
 
 function Mla(site) {
-  this.setSite(site);
+  if (site)
+    this.setSite(site);
 }
 
 // Mla.setSite(site)
@@ -13,7 +14,7 @@ Mla.prototype.setSite = function(site) {
 
 function getOrganization(site, cb) {
   var domain = site.match(/http:\/\/([a-z\.\-]+)/)[1];
-  fs.readFile("organizations.json", function(err, data) {
+  fs.readFile(__dirname + "/organizations.json", function(err, data) {
     if (err) {
       cb(err, undefined);
     }
@@ -82,35 +83,40 @@ Mla.prototype.getReference = function(cb) {
   });
 };
 
+Mla.prototype.convertToMla = function(citation) {
+  var MLA = "";
+  
+  if (citation.author)
+    MLA += citation.author + ". ";
+
+  if (citation.title)
+    MLA += citation.title + ". ";
+
+  if (citation.organization)
+    MLA += citation.organization + ". ";
+
+  if (citation.lastModDate)
+    MLA += citation.lastModDate + ". ";
+
+  if (citation.type)
+    MLA += citation.type + ". ";
+
+  if (citation.accessDate)
+    MLA += citation.accessDate + ". ";
+
+  if (citation.url)
+    MLA += citation.url + ". ";
+
+  return MLA;
+}
+
 Mla.prototype.getMlaReference = function(cb) {
   this.getReference(function(err, citation) {
     if (err) {
       cb(err, undefined);
     }
     else {
-      var MLA = "";
-      
-      if (citation.author)
-        MLA += citation.author + ". ";
-
-      if (citation.title)
-        MLA += citation.title + ". ";
-
-      if (citation.organization)
-        MLA += citation.organization + ". ";
-
-      if (citation.lastModDate)
-        MLA += citation.lastModDate + ". ";
-
-      if (citation.type)
-        MLA += citation.type + ". ";
-
-      if (citation.accessDate)
-        MLA += citation.accessDate + ". ";
-
-      if (citation.url)
-        MLA += citation.url + ". ";
-
+      var MLA = Mla.prototype.convertToMla(citation);
       cb(undefined, MLA);
     }
   });
