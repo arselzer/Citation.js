@@ -27,6 +27,41 @@ This is why I am creating Citation.js.
 We *need* a open-source framework to gather citation data
 and compete with commercial services.
 
+## Weaknesses
+
+# Organizations
+
+Citation.js has a list of domain names mapping to the
+names of the organization owning them.
+If a domain is not in the list, the organization will
+not show up.
+
+I hope to solve this problem by crawling lists of organizations.
+In the meantime they will have to be added manually to the
+file (organizations.json).
+
+Not including the organization does not invalidate the citation.
+It may (or may not) just make it more convenient.
+
+# Publishing dates
+
+Grabbing the publishing date of an article is not yet supported
+on any site. I will soon implement it on the biggest sites (and
+blogging frameworks), but it will never work on all sites.
+
+The publishing date is mandatory by definition, but it is not
+possibly to provide it on every site.
+Every user of other sites
+has invalid sources should the rule apply and no publishing date is found,
+but I believe it is insensible to judge a source based on a missing date.
+
+It may be possible to approximate the date of publication by searching the google archive.
+
+# Authors
+
+It is always attempted to get the contents of the standard meta tags,
+but getting the name of the author will also never work everywhere.
+
 ## Library
 
 Set the site, which to cite.
