@@ -29,7 +29,7 @@ and compete with commercial services.
 
 ## Weaknesses
 
-# Organizations
+### Organizations
 
 Citation.js has a list of domain names mapping to the
 names of the organization owning them.
@@ -43,7 +43,7 @@ file (organizations.json).
 Not including the organization does not invalidate the citation.
 It may (or may not) just make it more convenient.
 
-# Publishing dates
+### Publishing dates
 
 Grabbing the publishing date of an article is not yet supported
 on any site. I will soon implement it on the biggest sites (and
@@ -57,7 +57,7 @@ but I believe it is insensible to judge a source based on a missing date.
 
 It may be possible to approximate the date of publication by searching the google archive.
 
-# Authors
+### Authors
 
 It is always attempted to get the contents of the standard meta tags,
 but getting the name of the author will also never work everywhere.
@@ -73,7 +73,7 @@ Get a reference object.
 Get a MLA reference string.
 `Citation.getMlaReference`
 
-# Example
+### Example
 
 ```javascript
 // Import Citation.js.
