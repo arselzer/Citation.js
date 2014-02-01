@@ -4,7 +4,7 @@ var argv = require("optimist").argv,
 if (argv.site || argv.s) {
   var url = "http://" + (argv.site || argv.s);
   var mla = new Mla(url);
-  mla.getReference(function(err, citation) {
+  mla.getMlaReference(function(err, citation) {
     if (err) throw err;
     console.log(citation);
   });

@@ -4,13 +4,13 @@ MLA.js
 # Why another MLA Citation generator?
 
 There are a few notable online citation-tools.
-They may just work, but they come with a catch:
-* They are closed-source
-* They are plastered with advertisements.
-* They are bulkily performing a simple process.
+They all just work, but they come with disadvantages:
+* They are closed-source.
+* They are full of advertisements.
+* They are performing a simple process in a complicated way.
 
-Most people will simply want to cite web sites.
-Citing web sites in MLA is not a complicated process.
+Most people will simply want to cite web sites,
+and web sites in MLA is not a complicated process.
 
 It is incredible that students are required to cite
 their sources in "MLA format",
@@ -71,5 +71,10 @@ This effectively makes the collection a unordered list.
 Unordered data makes crawling and generating trees of citations
 challenging for crawlers.
 
-I believe we need to get rid of MLA.
-We need a web standard for citations.
+No document says that the URL has to be given.
+Not specifying the URL would make most citations useless,
+and should therefore be in the standard.
+I have had teachers, which ask to "cite in MLA", and then
+complain that there are no URLs.
+
+We need a better standard for citations.
