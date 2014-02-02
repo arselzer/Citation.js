@@ -11,6 +11,10 @@
     "citation",
     "reference"
   ],
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/AlexanderSelzer/Citation.js"
+  },
   "author": "Alexander Selzer <aselzer3@gmail.com>",
   "license": "MIT",
 
