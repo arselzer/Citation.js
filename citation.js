@@ -13,7 +13,7 @@ Mla.prototype.setSite = function(site) {
 };
 
 function getOrganization(site, cb) {
-  var domain = site.match(/http(s)?:\/\/([a-z\.\-]+)/)[1];
+  var domain = site.match(/http[s]?:\/\/([a-z\.\-]+)/)[1];
   fs.readFile(__dirname + "/organizations.json", function(err, data) {
     if (err) {
       cb(err, undefined);
