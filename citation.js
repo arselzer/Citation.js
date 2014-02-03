@@ -108,7 +108,7 @@ Mla.prototype.convertToMla = function(citation) {
     MLA += citation.url + ". ";
 
   return MLA;
-}
+};
 
 Mla.prototype.getMlaReference = function(cb) {
   this.getReference(function(err, citation) {
@@ -120,6 +120,6 @@ Mla.prototype.getMlaReference = function(cb) {
       cb(undefined, MLA);
     }
   });
-}
+};
 
 module.exports = Mla;

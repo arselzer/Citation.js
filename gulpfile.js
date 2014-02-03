@@ -6,7 +6,8 @@ var mocha = require("gulp-mocha");
 gulp.task("jshint", function() {
   log("jshinting files.");
   gulp.src("./*.js")
-  .pipe(jshint());
+  .pipe(jshint())
+  .pipe(jshint.reporter("default"));
 });
 
 gulp.task("mocha", function() {
