@@ -62,14 +62,18 @@ function getOrganization(site, cb) {
 
 Mla.prototype.callExtension = function(name, $) {
   var extensions = this.extensions[name];
-  extensions.forEach(function(extension) {
-    if (extension.check($))
-      return extension.call($);
-  });
+  var extension = extensions.filter(function(extension) {
+    return extension.check($);
+  })[0];
+  if (extension)
+    return extension.call($);
+  else
+    return null;
 };
 
 // Mla.getReference(function(err, citation) { } )
 Mla.prototype.getReference = function(cb) {
+  var self = this;
   var site = this.site;
   request(site, function(err, res, body) {
     if (err) {
@@ -86,7 +90,7 @@ Mla.prototype.getReference = function(cb) {
           var $ = cheerio.load(body);
           
           // MLA field 1: author
-          citation.author = $('meta[name="author"]').attr("content");
+          citation.author = self.callExtension("author", $);
 
           // MLA field 2: title
           citation.title = $("head title").text();
@@ -95,7 +99,7 @@ Mla.prototype.getReference = function(cb) {
           citation.organization = organization;
 
           // MLA field 4: date of last modification
-          citation.lastModDate = null;
+          citation.lastModDate = self.callExtension("date", $);
 
           // MLA field 5: media type
           citation.type = "Web";
@@ -118,7 +122,9 @@ Mla.prototype.convertToMla = function(citation) {
   var MLA = "";
   
   for (var field in citation) {
-    if (field === "url")
+    if (citation[field] === null)
+      ;// Nothing
+    else if (field === "url")
       MLA += "<" + citation[field] + ">. ";
     else
       MLA += citation[field] + ". ";
