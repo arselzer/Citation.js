@@ -2,14 +2,37 @@ var request = require("request"),
     fs = require("fs"),
     cheerio = require("cheerio");
 
-function Mla(site) {
+var defaultExtensions = [
+  require("./lib/author/meta"),
+  require("./lib/date/wikipedia")
+];
+
+function Mla(site, extensions) {
+  this.extensions = {};
+  this.extensions.author = [];
+  this.extensions.date = [];
+  var self = this;
+
+  this.useExtensions(defaultExtensions);
+
   if (site)
     this.setSite(site);
+  if (extensions) {
+    this.useExtensions(extensions);
+  }
 }
 
 // Mla.setSite(site)
 Mla.prototype.setSite = function(site) {
   this.site = site;
+};
+
+Mla.prototype.useExtensions = function(extensions) {
+  var self = this;
+  extensions.forEach(function(extension) {
+    // e.g. self.extensions.author.push(meta);
+    self.extensions[extension.type].push(extension);
+  });
 };
 
 function getOrganization(site, cb) {
@@ -36,6 +59,14 @@ function getOrganization(site, cb) {
     }
   });
 }
+
+Mla.prototype.callExtension = function(name, $) {
+  var extensions = this.extensions[name];
+  extensions.forEach(function(extension) {
+    if (extension.check($))
+      return extension.call($);
+  });
+};
 
 // Mla.getReference(function(err, citation) { } )
 Mla.prototype.getReference = function(cb) {
@@ -73,7 +104,7 @@ Mla.prototype.getReference = function(cb) {
           citation.accessDate = (new Date()).toDateString();
 
           // MLA (non-standard) field 7: URL
-          citation.url = "<" + site + ">";
+          citation.url = site;
 
           cb(undefined, citation);
 
@@ -86,26 +117,12 @@ Mla.prototype.getReference = function(cb) {
 Mla.prototype.convertToMla = function(citation) {
   var MLA = "";
   
-  if (citation.author)
-    MLA += citation.author + ". ";
-
-  if (citation.title)
-    MLA += citation.title + ". ";
-
-  if (citation.organization)
-    MLA += citation.organization + ". ";
-
-  if (citation.lastModDate)
-    MLA += citation.lastModDate + ". ";
-
-  if (citation.type)
-    MLA += citation.type + ". ";
-
-  if (citation.accessDate)
-    MLA += citation.accessDate + ". ";
-
-  if (citation.url)
-    MLA += citation.url + ". ";
+  for (var field in citation) {
+    if (field === "url")
+      MLA += "<" + citation[field] + ">. ";
+    else
+      MLA += citation[field] + ". ";
+  }
 
   return MLA;
 };
