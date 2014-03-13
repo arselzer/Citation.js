@@ -1,6 +1,8 @@
 Citation.js
 ========
 
+See the [Documentation](https://github.com/AlexanderSelzer/Citation.js/blob/master/docs.md)
+
 ## Why another MLA Citation generator?
 
 There are a few notable online citation-tools.

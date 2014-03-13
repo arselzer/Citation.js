@@ -101,7 +101,7 @@ Mla.prototype.getReference = function (cb) {
             return null;
         })
 
-       	cb(undefined, citation);
+        cb(undefined, citation);
 
       });
     }
