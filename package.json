@@ -1,7 +1,7 @@
 {
   "name": "citation.js",
   "version": "0.3.0",
-  "description": "Get the correct MLA citation for a site.",
+  "description": "An extensible way to scrape web sites and retrieve references to the + export as MLA",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/gulp mocha"
