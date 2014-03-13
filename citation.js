@@ -7,26 +7,30 @@ var defaultExtensions = [
   require("./lib/date/wikipedia")
 ];
 
+// new Mla(String, [])
 function Mla(site, extensions) {
   this.extensions = {};
   this.extensions.author = [];
   this.extensions.date = [];
-  var self = this;
 
+  // Use default etensions.
   this.useExtensions(defaultExtensions);
 
+  // Construct using site.
   if (site)
     this.setSite(site);
+
   if (extensions) {
     this.useExtensions(extensions);
   }
 }
 
-// Mla.setSite(site)
+// Mla#setSite(String)
 Mla.prototype.setSite = function(site) {
   this.site = site;
 };
 
+// Mla#useExtensions([])
 Mla.prototype.useExtensions = function(extensions) {
   var self = this;
   extensions.forEach(function(extension) {
@@ -60,6 +64,7 @@ function getOrganization(site, cb) {
   });
 }
 
+// Mla#callExtension
 Mla.prototype.callExtension = function(name, $) {
   var extensions = this.extensions[name];
   var extension = extensions.filter(function(extension) {
@@ -71,53 +76,50 @@ Mla.prototype.callExtension = function(name, $) {
     return null;
 };
 
-// Mla.getReference(function(err, citation) { } )
+// Mla#getReference(function(err, citation))
 Mla.prototype.getReference = function(cb) {
   var self = this;
   var site = this.site;
+
   request(site, function(err, res, body) {
     if (err) {
       cb(err, undefined);
     }
     else {
-      if (err) {
-        cb(err, undefined);
-      }
-      else {
-        getOrganization(site, function(err, organization) {
-          var citation = {};
-          
-          var $ = cheerio.load(body);
-          
-          // MLA field 1: author
-          citation.author = self.callExtension("author", $);
+      getOrganization(site, function(err, organization) {
+        var citation = {};
 
-          // MLA field 2: title
-          citation.title = $("head title").text();
+        var $ = cheerio.load(body);
 
-          // MLA field 3: organization
-          citation.organization = organization;
+        // MLA field 1: author
+        citation.author = self.callExtension("author", $);
 
-          // MLA field 4: date of last modification
-          citation.lastModDate = self.callExtension("date", $);
+        // MLA field 2: title
+        citation.title = $("head title").text();
 
-          // MLA field 5: media type
-          citation.type = "Web";
-          
-          // MLA field 6: date accessed.
-          citation.accessDate = (new Date()).toDateString();
+        // MLA field 3: organization
+        citation.organization = organization;
 
-          // MLA (non-standard) field 7: URL
-          citation.url = site;
+        // MLA field 4: date of last modification
+        citation.lastModDate = self.callExtension("date", $);
 
-          cb(undefined, citation);
+        // MLA field 5: media type
+        citation.type = "Web";
 
-        });
-      }
+        // MLA field 6: date accessed.
+        citation.accessDate = (new Date()).toDateString();
+
+        // MLA (non-standard) field 7: URL
+        citation.url = site;
+
+        cb(undefined, citation);
+
+      });
     }
   });
 };
 
+// Mla#convertToMla(citation)
 Mla.prototype.convertToMla = function(citation) {
   var MLA = "";
   
@@ -133,6 +135,7 @@ Mla.prototype.convertToMla = function(citation) {
   return MLA;
 };
 
+// Mla#getMlaReference(function(err, citation))
 Mla.prototype.getMlaReference = function(cb) {
   this.getReference(function(err, citation) {
     if (err) {
