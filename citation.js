@@ -25,25 +25,24 @@ function Mla(site, extensions) {
 }
 
 // Mla#setSite(String)
-Mla.prototype.setSite = function(site) {
+Mla.prototype.setSite = function (site) {
   this.site = site;
 };
 
 // Mla#useExtensions([])
-Mla.prototype.useExtensions = function(extensions) {
+Mla.prototype.useExtensions = function (extensions) {
   var self = this;
-  extensions.forEach(function(extension) {
+  extensions.forEach(function (extension) {
     self.extensions.push(extension);
   });
 };
 
 function getOrganization(site, cb) {
   var domain = site.match(/http[s]?:\/\/([a-z\.\-]+)/)[1];
-  fs.readFile(__dirname + "/organizations.json", function(err, data) {
+  fs.readFile(__dirname + "/organizations.json", function (err, data) {
     if (err) {
       cb(err, undefined);
-    }
-    else {
+    } else {
       var organizationName;
       var organizations = JSON.parse(data.toString());
       for (var organizationDomain in organizations) {
@@ -54,40 +53,31 @@ function getOrganization(site, cb) {
       if (organizationName) {
         // MLA field 3: organization
         cb(undefined, organizationName);
-      }
-      else {
+      } else {
         cb(undefined, null);
       }
     }
   });
 }
 
-// Mla#callExtension
-Mla.prototype.callExtension = function(extension, $) {
-
-};
-
 // Mla#getReference(function(err, citation))
-Mla.prototype.getReference = function(cb) {
+Mla.prototype.getReference = function (cb) {
   var self = this;
   var site = this.site;
 
-  request(site, function(err, res, body) {
+  request(site, function (err, res, body) {
     if (err) {
       cb(err, undefined);
-    }
-    else {
-      getOrganization(site, function(err, organization) {
+    } else {
+      /* Default behaviour: get organization of domain */
+      getOrganization(site, function (err, organization) {
         var citation = {};
 
         var $ = cheerio.load(body);
-        
-        self.extensions.forEach(function(extension) {
-  				if (extension.check($))
-    				return extension.call($, citation);
-  				else
-    				return null;
-        })
+
+        /* default values */
+
+        citation.author = null;
 
         // MLA field 2: title
         citation.title = $("head title").text();
@@ -95,16 +85,23 @@ Mla.prototype.getReference = function(cb) {
         // MLA field 3: organization
         citation.organization = organization;
 
-        // MLA field 5: media type
+        // MLA field 4: media type
         citation.type = "Web";
 
-        // MLA field 6: date accessed.
+        // MLA field 5: date accessed.
         citation.accessDate = (new Date()).toDateString();
 
-        // MLA (non-standard) field 7: URL
+        // MLA (non-standard) field 6: URL
         citation.url = site;
 
-        cb(undefined, citation);
+        self.extensions.forEach(function (extension) {
+          if (extension.check($))
+            return extension.call($, citation);
+          else
+            return null;
+        })
+
+       	cb(undefined, citation);
 
       });
     }
@@ -112,29 +109,43 @@ Mla.prototype.getReference = function(cb) {
 };
 
 // Mla#convertToMla(citation)
-Mla.prototype.convertToMla = function(citation) {
+Mla.convertToMla = function (citation) {
   var MLA = "";
-  
-  for (var field in citation) {
-    if (citation[field] === null)
-      ;// Nothing
+
+  var mlaFields = [];
+
+  // 1
+  mlaFields.push(citation.author);
+  // 2
+  mlaFields.push(citation.title);
+  // 3
+  mlaFields.push(citation.organization);
+  // 4
+  mlaFields.push(citation.type);
+  // 5
+  mlaFields.push(citation.accessDate);
+  // 6
+  mlaFields.push(citation.url);
+
+  mlaFields.forEach(function (field) {
+    if (typeof (field) === undefined || field === null)
+    ;
     else if (field === "url")
-      MLA += "<" + citation[field] + ">. ";
+      MLA += "<" + field + ">. ";
     else
-      MLA += citation[field] + ". ";
-  }
+      MLA += field + ". ";
+  });
 
   return MLA;
 };
 
 // Mla#getMlaReference(function(err, citation))
-Mla.prototype.getMlaReference = function(cb) {
-  this.getReference(function(err, citation) {
+Mla.prototype.getMlaReference = function (cb) {
+  this.getReference(function (err, citation) {
     if (err) {
       cb(err, undefined);
-    }
-    else {
-      var MLA = Mla.prototype.convertToMla(citation);
+    } else {
+      var MLA = Mla.convertToMla(citation);
       cb(undefined, MLA);
     }
   });

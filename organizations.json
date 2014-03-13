@@ -2,5 +2,7 @@
   "wikipedia.org" : "Wikimedia Foundation",
   "google.com" : "Google",
   "twitter.com" : "Twitter",
-  "mozilla.org" : "Mozilla"
+  "mozilla.org" : "Mozilla",
+  "github.com": "Github, inc.",
+  "broccolifly.com": "The Holy Broccoli Fly"
 }
