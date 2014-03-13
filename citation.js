@@ -4,15 +4,13 @@ var request = require("request");
 var cheerio = require("cheerio");
 
 var defaultExtensions = [
-  require("./lib/author/meta"),
-  require("./lib/date/wikipedia")
+  require("./lib/meta"),
+  require("./lib/wikipedia")
 ];
 
 // new Mla(String, [])
 function Mla(site, extensions) {
-  this.extensions = {};
-  this.extensions.author = [];
-  this.extensions.date = [];
+  this.extensions = [];
 
   // Use default etensions.
   this.useExtensions(defaultExtensions);
@@ -35,8 +33,7 @@ Mla.prototype.setSite = function(site) {
 Mla.prototype.useExtensions = function(extensions) {
   var self = this;
   extensions.forEach(function(extension) {
-    // e.g. self.extensions.author.push(meta);
-    self.extensions[extension.type].push(extension);
+    self.extensions.push(extension);
   });
 };
 
@@ -66,15 +63,8 @@ function getOrganization(site, cb) {
 }
 
 // Mla#callExtension
-Mla.prototype.callExtension = function(name, $) {
-  var extensions = this.extensions[name];
-  var extension = extensions.filter(function(extension) {
-    return extension.check($);
-  })[0];
-  if (extension)
-    return extension.call($);
-  else
-    return null;
+Mla.prototype.callExtension = function(extension, $) {
+
 };
 
 // Mla#getReference(function(err, citation))
@@ -91,18 +81,19 @@ Mla.prototype.getReference = function(cb) {
         var citation = {};
 
         var $ = cheerio.load(body);
-
-        // MLA field 1: author
-        citation.author = self.callExtension("author", $);
+        
+        self.extensions.forEach(function(extension) {
+  				if (extension.check($))
+    				return extension.call($, citation);
+  				else
+    				return null;
+        })
 
         // MLA field 2: title
         citation.title = $("head title").text();
 
         // MLA field 3: organization
         citation.organization = organization;
-
-        // MLA field 4: date of last modification
-        citation.lastModDate = self.callExtension("date", $);
 
         // MLA field 5: media type
         citation.type = "Web";

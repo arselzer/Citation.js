@@ -45,6 +45,7 @@ describe("Citation#changeSite", function() {
       it("should get a HTTPS MLA citation for the MDN JS RegExp page.", function(done) {
         citation.getMlaReference(function(err, reference) {
           if (err) throw err;
+          console.log(reference);
           done();
         });
       });
