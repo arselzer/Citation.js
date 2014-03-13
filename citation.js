@@ -1,6 +1,7 @@
-var request = require("request"),
-    fs = require("fs"),
-    cheerio = require("cheerio");
+var fs = require("fs");
+var async = require("async");
+var request = require("request");
+var cheerio = require("cheerio");
 
 var defaultExtensions = [
   require("./lib/author/meta"),
