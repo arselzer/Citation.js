@@ -3,88 +3,78 @@ Citation.js
 
 See the [Documentation](https://github.com/AlexanderSelzer/Citation.js/blob/master/docs.md)
 
-## Why another MLA Citation generator?
+## Why, exactly?
 
 There are a few notable online citation-tools.
-Most just work in some way, but come with disadvantages:
+Most *just work in some way*, but they come with big disadvantages:
 * They are closed-source.
 * They are full of advertisements.
-* They are performing a simple process in a complicated way.
+* They are solving a simple problem in a complicated way.
 
-Most people will simply want to cite web sites,
-and luckily the basic citing of web sites
-in MLA is not a complicated process.
+Most will simply want to cite web sites,
+and unsurprisingly the this is not a very complicated
+process.
 
-It is incredible that students are required to cite
-their sources in "MLA format",
-and then are told to "go to EasyBib or Citationmachine",
+It is bad that students are required to cite
+their sources in the "MLA format",
+and are then told to "go to EasyBib or Citationmachine",
 not knowing how the "standard" works.
 
-These sites do not only good.
-They are slow, unreliable, greedy.
+These sites are slow, unreliable, greedy.
+We should not be realiant on them
 
-You don't deserve being reliant on these services.
+We need a open-source framework to gather reference data
+effectively and present it well.
 
-This is why I am creating Citation.js.
-We *need* a open-source framework to gather citation data
-and compete with commercial services.
+## What
 
-## Weaknesses
+This is just a library. It can scrape sites efficiently, and
+extract the reference data, while including tools for converting
+formats, and obtaining the organization of a domain name.
+
+## Features Still needing work
 
 ### Organizations
 
 Citation.js has a list of domain names mapping to the
 names of the organization owning them.
 If a domain is not in the list, the organization will
-not show up.
+not show up in the reference.
 
-I hope to solve this problem by crawling lists of organizations.
-In the meantime they will have to be added manually to the
-file (organizations.json).
-
-Not including the organization does not invalidate the citation.
-It may (or may not) just make it more convenient.
+Possibly lists of orgaizations and their domains exits.
+I will try to scrape them and add them to the database,
+but everyone should feel free to manually add domains
+to the database.
 
 ### Publishing dates
 
-Grabbing the publishing date of an article is not yet supported
-on any site. I will soon implement it on the biggest sites (and
-blogging frameworks), but it will never work on all sites.
+Extracting the publishing date is not yet supported, but
+take a look at the extension interface if you feel like
+adding some site-specific extension to citation.js.
 
-The publishing date is mandatory by definition, but it is not
-possibly to provide it on every site.
-Every user of other sites
-has invalid sources should the rule apply and no publishing date is found,
-but I believe it is insensible to judge a source based on a missing date.
-
-It may be possible to approximate the date of publication by searching the google archive.
+The publishing date is supposed to me mandatory according
+to most MLA documents,
+however MLA web services do widely disrespect this.
 
 ### Authors
 
-It is always attempted to get the contents of the standard meta tags,
-but getting the name of the author will also never work everywhere.
+Citation.js just looks at meta tags, but writing an extension
+for more sites is easy.
 
-## Library
+### Other formats?
 
-Set the site, which to cite.
-`Citation.setSite(site)`
+I am aware that other formats exist beside MLA, such as APA.
 
-Get a reference object.
-`Citation.getReference`
-
-Get a MLA reference string.
-`Citation.getMlaReference`
+There is currently no way of extending the reference export functions,
+but it will surely come in the future.
 
 ### Example
 
 ```javascript
-// Import Citation.js.
 var Citation = require("./citation.js");
 
-// Create a new citation object.
 var citation = new Citation("http://en.wikipedia.org/wiki/JavaScript");
 
-// Asynchronously obtain a MLA citation.
 citation.getMlaReference(function(err, reference) {
   if (err) throw err;
   console.log(reference)
@@ -95,13 +85,12 @@ citation.getMlaReference(function(err, reference) {
 
 ## Critique on MLA
 
-MLA sucks.
-The format is not easily readable, and there is
-no centrally accepted definition of the standard.
+MLA is a horrible format.
+There is no centrally accepted definition of the standard.
 
 Everyone seems to have their own interpretation of it.
 
-There is a book of by MLA association,
+There is a book written by by *MLA association*,
 "MLA Style Manual and Guide to Scholarly Publishing",
 but it seems more like a manual than a clear standardization effort,
 possibly explaining why there are so many different points of
@@ -113,7 +102,7 @@ http://www.library.cornell.edu/resrch/citmanage/mla
 http://www2.liu.edu/cwis/cwp/library/workshop/citmla.htm
 https://owl.english.purdue.edu/owl/resource/747/01/
 
-This seems to be the clearest definition:
+This is the clearest definition I found:
 http://www.library.arizona.edu/search/reference/citation-mla.html#mlabk8
 
 The public site of the "Modern Language Association"
