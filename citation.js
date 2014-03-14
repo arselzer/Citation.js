@@ -61,51 +61,64 @@ function getOrganization(site, cb) {
 }
 
 // Mla#getReference(function(err, citation))
-Mla.prototype.getReference = function (cb) {
+Mla.prototype.getReference = function (callback) {
   var self = this;
   var site = this.site;
 
-  request(site, function (err, res, body) {
-    if (err) {
-      cb(err, undefined);
-    } else {
-      /* Default behaviour: get organization of domain */
-      getOrganization(site, function (err, organization) {
-        var citation = {};
-
-        var $ = cheerio.load(body);
-
-        /* default values */
-
-        citation.author = null;
-
-        // MLA field 2: title
-        citation.title = $("head title").text();
-
-        // MLA field 3: organization
-        citation.organization = organization;
-
-        // MLA field 4: media type
-        citation.type = "Web";
-
-        // MLA field 5: date accessed.
-        citation.accessDate = (new Date()).toDateString();
-
-        // MLA (non-standard) field 6: URL
-        citation.url = site;
-
-        self.extensions.forEach(function (extension) {
-          if (extension.check($))
-            return extension.call($, citation);
-          else
-            return null;
-        })
-
-        cb(undefined, citation);
-
+  async.waterfall([
+    
+    function(cb) {
+      request(site, function (err, res, body) {
+        if (!err)
+          cb(err, body);
+        else
+          cb(err, null);
       });
-    }
-  });
+    },
+    
+    function(body, cb) {
+      getOrganization(site, function (err, organization) {
+        if (!err)
+          cb(null, body, organization);
+        else
+          cb(err, null);
+      });
+    },
+    
+    function(body, organization, cb) {
+      var citation = {};
+
+      var $ = cheerio.load(body);
+
+      /* default values */
+
+      // MLA Field 1: author
+      citation.author = null;
+
+      // MLA field 2: title
+      citation.title = $("head title").text();
+
+      // MLA field 3: organization
+      citation.organization = organization;
+
+      // MLA field 4: media type
+      citation.type = "Web";
+
+      // MLA field 5: date accessed
+      citation.accessDate = (new Date()).toDateString();
+
+      // MLA (non-standard, see README) field 6: URL
+      citation.url = site;
+
+      self.extensions.forEach(function (extension) {
+        if (extension.check($))
+          return extension.call($, citation);
+        else
+          return null;
+      });
+
+      callback(undefined, citation);
+      }]);
 };
 
 // Mla#convertToMla(citation)
