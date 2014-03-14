@@ -37,28 +37,33 @@ Mla.prototype.useExtensions = function (extensions) {
   });
 };
 
-function getOrganization(site, cb) {
+Mla.getOrganization = function(site, cb) {
   var domain = site.match(/http[s]?:\/\/([a-z\.\-]+)/)[1];
+  
   fs.readFile(__dirname + "/organizations.json", function (err, data) {
     if (err) {
       cb(err, undefined);
-    } else {
+    }
+    else {
       var organizationName;
       var organizations = JSON.parse(data.toString());
+      
       for (var organizationDomain in organizations) {
+        // e.g. finds 'google.com' in 'maps.google.com'
         if ((new RegExp(organizationDomain + "$")).test(domain)) {
           organizationName = organizations[organizationDomain];
         }
       }
+      
       if (organizationName) {
-        // MLA field 3: organization
         cb(undefined, organizationName);
-      } else {
+      }
+      else {
         cb(undefined, null);
       }
     }
   });
-}
+};
 
 // Mla#getReference(function(err, citation))
 Mla.prototype.getReference = function (callback) {
@@ -77,7 +82,7 @@ Mla.prototype.getReference = function (callback) {
     },
     
     function(body, cb) {
-      getOrganization(site, function (err, organization) {
+      Mla.getOrganization(site, function (err, organization) {
         if (!err)
           cb(null, body, organization);
         else
