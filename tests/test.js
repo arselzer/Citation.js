@@ -53,3 +53,23 @@ describe("Citation#changeSite", function () {
     });
   });
 });
+
+describe("Citation.convertToMla", function() {
+  it("should convert a JSON reference to MLA", function (done) {
+    var testReference = JSON.parse('{"author": null, "title": "JavaScript - Wikipedia, the free encyclopedia", "organization": "Wikimedia Foundation", "type": "Web", "accessDate": "Fri Mar 14 2014", "url": "http://en.wikipedia.org/wiki/javaScript"}');
+    var mlaReference = Citation.convertToMla(testReference);
+    console.log(mlaReference);
+    done();
+  });
+});
+
+describe("Citation.getOrganization", function() {
+  it("should obtain the organization for a domain name", function(done) {
+    var domain = "http://www.google.com";
+    Citation.getOrganization(domain, function(err, organization) {
+      if (err) throw err;
+      console.log(organization);
+      done();
+    });
+  });
+});
