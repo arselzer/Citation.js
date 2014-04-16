@@ -143,15 +143,16 @@ Mla.convertToMla = function (citation) {
   // 5
   mlaFields.push(citation.accessDate);
   // 6
-  mlaFields.push(citation.url);
+  mlaFields.push("<" + citation.url + ">");
 
   mlaFields.forEach(function (field) {
-    if (typeof (field) === undefined || field === null)
-    ;
-    else if (field === "url")
-      MLA += "<" + field + ">. ";
-    else
+    console.log(field);
+    if (typeof (field) === undefined || field === null) {
+      ;
+    }
+    else {
       MLA += field + ". ";
+    }
   });
 
   return MLA;

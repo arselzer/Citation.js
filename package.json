@@ -1,6 +1,6 @@
 {
   "name": "citation.js",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "An extensible way to scrape web sites and retrieve references to the + export as MLA",
   "main": "index.js",
   "scripts": {
