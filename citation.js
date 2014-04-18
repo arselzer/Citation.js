@@ -38,7 +38,13 @@ Mla.prototype.useExtensions = function (extensions) {
 };
 
 Mla.getOrganization = function(site, cb) {
-  var domain = site.match(/http[s]?:\/\/([a-z\.\-]+)/)[1];
+  var domainExp = site.match(/http[s]?:\/\/([a-z\.\-]+)/);
+
+  if (typeof domainExp === "undefined" || !domainExp) {
+    return cb(new Error("Invalid URL"), null);
+  }
+
+  var domain = domainExp[1];
   
   fs.readFile(__dirname + "/organizations.json", function (err, data) {
     if (err) {
@@ -74,19 +80,14 @@ Mla.prototype.getReference = function (callback) {
     
     function(cb) {
       request(site, function (err, res, body) {
-        if (!err)
-          cb(err, body);
-        else
-          cb(err, null);
+        if (err) console.log(err);
+        cb(err, body);
       });
     },
     
     function(body, cb) {
       Mla.getOrganization(site, function (err, organization) {
-        if (!err)
-          cb(null, body, organization);
-        else
-          cb(err, null);
+        cb(err, body, organization);
       });
     },
     
@@ -122,8 +123,13 @@ Mla.prototype.getReference = function (callback) {
           return null;
       });
 
-      callback(undefined, citation);
-      }]);
+      callback(null, citation);
+    }],
+    
+    function(err, citation) {
+      if (err)
+        callback(err);
+    });
 };
 
 // Mla#convertToMla(citation)
