@@ -1,4 +1,6 @@
 var fs = require("fs");
+var url = require("url");
+var path = require("path");
 var async = require("async");
 var request = require("request");
 var cheerio = require("cheerio");
@@ -38,7 +40,7 @@ Mla.prototype.useExtensions = function (extensions) {
 };
 
 Mla.getOrganization = function(site, cb) {
-  var domainExp = site.match(/http[s]?:\/\/([a-z\.\-]+)/);
+  var domainExp = site.match(/https?:\/\/([a-z\.\-]+)/);
 
   if (typeof domainExp === "undefined" || !domainExp) {
     return cb(new Error("Invalid URL"), null);
@@ -81,20 +83,26 @@ Mla.prototype.getReference = function (callback) {
     function(cb) {
       request(site, function (err, res, body) {
         if (err) console.log(err);
-        cb(err, body);
+        cb(err, res, body);
       });
     },
     
-    function(body, cb) {
+    function(res, body, cb) {
       Mla.getOrganization(site, function (err, organization) {
-        cb(err, body, organization);
+        cb(err, res, body, organization);
       });
     },
     
-    function(body, organization, cb) {
+    function(res, body, organization, cb) {
       var citation = {};
+      var pdf = false;
 
-      var $ = cheerio.load(body);
+      if (/application\/pdf/i.test(res.headers["content-type"])) {
+        pdf = true;
+      }
+      else {
+        var $ = cheerio.load(body);
+      }
 
       /* default values */
 
@@ -102,13 +110,23 @@ Mla.prototype.getReference = function (callback) {
       citation.author = null;
 
       // MLA field 2: title
-      citation.title = $("head title").text();
+      if (!pdf) {
+        citation.title = $("head title").text();
+      }
+      else {
+        citation.title = decodeURIComponent(path.basename(url.parse(site).pathname));
+      }
 
       // MLA field 3: organization
       citation.organization = organization;
 
       // MLA field 4: media type
-      citation.type = "Web";
+      if (pdf) {
+        citation.type = "Web [PDF]";
+      }
+      else {
+        citation.type = "Web";
+      }
 
       // MLA field 5: date accessed
       citation.accessDate = (new Date()).toDateString();
@@ -116,12 +134,14 @@ Mla.prototype.getReference = function (callback) {
       // MLA (non-standard, see README) field 6: URL
       citation.url = site;
 
-      self.extensions.forEach(function (extension) {
-        if (extension.check($))
-          return extension.call($, citation);
-        else
-          return null;
-      });
+      if (!pdf) {
+        self.extensions.forEach(function (extension) {
+          if (extension.check($))
+            return extension.call($, citation);
+          else
+            return null;
+        });
+      }
 
       callback(null, citation);
     }],

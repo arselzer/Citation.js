@@ -10,7 +10,7 @@ var citation = new Citation("http://ga.water.usgs.gov/edu/ph.html");
 
 describe("Citation#getMlaReference", function () {
   this.timeout(20000);
-  it("should get a JSON citation for the JavaScript Wikipedia page.", function (done) {
+  it("should get a MLA citation for the JavaScript Wikipedia page.", function (done) {
     citation.getMlaReference(function (err, reference) {
       if (err) throw err;
       console.log(JSON.stringify(reference, null, 2));
@@ -53,6 +53,19 @@ describe("Citation#changeSite", function () {
     });
   });
 });
+
+describe("Citation#getMlaReference", function () {
+  this.timeout(20000);
+  it("should get a MLA citation for a PDF.", function (done) {
+    citation.setSite("http://www.cs.ucr.edu/~eamonn/CE/Bayesian%20Classification%20withInsect_examples.pdf");
+    citation.getMlaReference(function (err, reference) {
+      if (err) throw err;
+      console.log(reference);
+      done();
+    });
+  });
+});
+
 
 describe("Citation.convertToMla", function() {
   it("should convert a JSON reference to MLA", function (done) {
