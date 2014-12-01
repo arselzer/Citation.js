@@ -1,6 +1,7 @@
 Citation.js
 ========
 [![devDependency Status](https://david-dm.org/AlexanderSelzer/Citation.js/dev-status.svg?style=flat)](https://david-dm.org/AlexanderSelzer/Citation.js#info=devDependencies)
+
 See the [Documentation](https://github.com/AlexanderSelzer/Citation.js/blob/master/docs.md)
 
 ## Why, exactly?
