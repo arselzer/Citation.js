@@ -1,5 +1,7 @@
 Citation.js
 ========
+[![devDependency Status](https://david-dm.org/AlexanderSelzer/Citation.js/dev-status.svg?style=flat)](https://david-dm.org/AlexanderSelzer/Citation.js#info=devDependencies)
+[![Build status](https://img.shields.io/travis/AlexanderSelzer/Citation.js.svg?style=flat)](https://travis-ci.org/AlexanderSelzer/Citation.js)
 
 See the [Documentation](https://github.com/AlexanderSelzer/Citation.js/blob/master/docs.md)
 
